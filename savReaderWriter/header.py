@@ -82,7 +82,7 @@ class Header(Generic):
     def freeMemory(self, funcName, *args):
         """Clean up: free memory claimed by e.g. getValueLabels and
         getVarNamesTypes"""
-        gc.collect()
+        #gc.collect()
         if segfaults:
             return
         #print("... freeing", funcName[8:])
