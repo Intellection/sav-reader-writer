@@ -248,7 +248,7 @@ class SavReader(Header):
                 elif varType > 0:
                     value = value.rstrip()
                     if self.ioUtf8_:
-                        record[i] = value.decode("utf-8")
+                        record[i] = value.decode("utf-8").strip()
                     else:
                         record[i] = value
         return record
