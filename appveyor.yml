@@ -55,7 +55,7 @@ install:
   # pip will build them from source using the MSVC compiler matching the
   # target Python version and architecture
   - "%CMD_IN_ENV% pip install -r appveyor-requirements.txt"
-  - "%CMD_IN_ENV% python -c \"import glob, subprocess; subprocess.call('pip install --no-index --find-links=c:\\tmp numpy' if glob.glob('c:\\tmp\\*.whl') else 'pip wheel --wheel-dir=c:\\tmp numpy', shell=True)\""
+  - "%CMD_IN_ENV% python -c \"import glob, subprocess; subprocess.call('pip install --no-index --find-links=c:/tmp numpy' if glob.glob('c:/tmp/*.whl') else 'pip wheel --wheel-dir=c:/tmp numpy', shell=True)\""
 
 cache:
   - C:\tmp -> appveyor.yml
