@@ -55,10 +55,11 @@ install:
   # pip will build them from source using the MSVC compiler matching the
   # target Python version and architecture
   - "%CMD_IN_ENV% pip install -r appveyor-requirements.txt"
-  - "%CMD_IN_ENV% python -c \"import glob, subprocess; subprocess.call('pip install --no-index --find-links=c:/tmp numpy' if glob.glob('c:/tmp/*.whl') else 'pip wheel --wheel-dir=c:/tmp numpy', shell=True)\""
+  - "powershell ./appveyor/install_numpy.ps1"
+  - "%CMD_IN_ENV% pip install --no-index --find-links=c:\\tmp numpy"
 
 cache:
-  - C:\tmp -> appveyor.yml
+  - C:\tmp -> \appveyor\install_numpy.ps1
 
 build: false  # Not a C# project, build stuff at the test step instead.
 
