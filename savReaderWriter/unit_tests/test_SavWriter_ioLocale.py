@@ -44,7 +44,7 @@ class test_SavWriter_ioLocale(unittest.TestCase):
         kwargs = dict(savFileName=self.savFileName, returnHeader=True,
                       ioLocale=germanlocale)
         with SavReader(**kwargs) as reader:
-            varNames = next(reader)
+            varNames = reader.next()
             self.assertEqual(varNames, [b'\xfcberhaupt'])
 
     def tearDown(self):

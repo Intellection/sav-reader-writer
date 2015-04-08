@@ -123,6 +123,7 @@ To get the 'bleeding edge' version straight from the repository do::
       python -m savReaderWriter.util.savViewer '/path/to/some/file.sav'
 
 * Removed several bugs, notably one related to memoization of SPSS datetimes
+* `SavReader.__enter__` now returns `self`, not `iter(self)`
 
 .. versionchanged:: 3.3
 
@@ -167,7 +168,7 @@ Here are the most important parts::
     
     # ---- reading files    
     with SavReader('someFile.sav', returnHeader=True) as reader:
-        header = next(reader)
+        header = reader.next()
         for line in reader:
             process(line)
 

@@ -67,7 +67,7 @@ class SavReader(Header):
     .. code-block:: python
 
         with SavReader('somefile.sav', returnHeader=True) as reader:
-            header = next(reader)
+            header = reader.next()
             for line in reader:
                 process(line)
     """
@@ -99,6 +99,7 @@ class SavReader(Header):
         self.unpack_from = self.myStruct.unpack_from
         self.seekNextCase = self.spssio.spssSeekNextCase
         self.caseBuffer = self.getCaseBuffer()
+        self.current_case_number = -1
 
     def __enter__(self):
         """ This function opens the spss data file (context manager)."""
@@ -106,7 +107,7 @@ class SavReader(Header):
             print(self.replace(os.linesep, "\n"))
         elif self.verbose:
             print(str(self).replace(os.linesep, "\n"))
-        return iter(self)
+        return self
 
     def __exit__(self, type, value, tb):
         """ This function closes the spss data file and does some cleaning.
@@ -170,6 +171,18 @@ class SavReader(Header):
             print(unicode(data))  # Python 3: str(data)
             data.close()"""
         return self.getFileReport()
+
+    def __next__(self):
+        """reader.next() -> the next value, or raise StopIteration"""
+        return self.next()
+
+    def next(self):
+        """reader.next() -> the next value, or raise StopIteration"""
+        self.current_case_number += 1
+        nCases = self.nCases + 1 if self.returnHeader else self.nCases
+        if self.current_case_number > nCases:
+            raise StopIteration
+        return next(iter(self))
 
     @memoized_property
     def shape(self):
@@ -239,7 +252,7 @@ class SavReader(Header):
         """ This is a helper function to implement the __getitem__ and
         the __iter__ special methods. """
 
-        if returnHeader:
+        if returnHeader and self.current_case_number <= 0:
             yield self.header
 
         used_as_iterator = all([start == 0, stop is None, step == 1])
@@ -251,8 +264,8 @@ class SavReader(Header):
         stop = self.nCases if stop is None else stop
         selection = self.selectVars is not None
         selectOne = len(self.selectVars) == 1 if self.selectVars else None
-
         for case in xrange(start, stop, step):
+
             if start or step != 1:
                 # only call this when iterating over part of the records
                 retcode = self.seekNextCase(c_int(self.fh), c_long(case))
