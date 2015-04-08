@@ -228,14 +228,14 @@ class test_SavHeaderReader_metadata_report(unittest.TestCase):
     def test_SavHReader_report_python3_bytes(self):
         with SavHeaderReader(self.savFileName) as header:
             encoding = header.fileEncoding
-            report_got = bytes(header, encoding)
+            report_got = bytes(header)
         self.assertEqual(report_expected.encode(encoding), report_got)
 
     @unittest.skipIf(sys.version_info[0] == 2, "No bytes method in Python 2")
     def test_SavHReader_report_python3_bytes_ioUtf8(self):
         with SavHeaderReader(self.savFileName_ioUtf8, ioUtf8=True) as header:
             encoding = header.fileEncoding
-            report_got = bytes(header, encoding)
+            report_got = bytes(header)
         self.assertEqual(report_expected_ioUtf8.encode(encoding), report_got)
 
 if __name__ == "__main__":

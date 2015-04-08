@@ -59,7 +59,7 @@ class test_SavReader_file_report(unittest.TestCase, gocept.testing.assertion.Ell
         data = SavReader(self.savFileName)
         with data:
             encoding = data.fileEncoding
-            report_got = bytes(data, encoding)
+            report_got = bytes(data)
         self.assertEllipsis(report_expected.encode(encoding), report_got)
 
 if __name__ == "__main__":
