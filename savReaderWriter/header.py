@@ -9,7 +9,7 @@ import re
 import time
 import getpass
 import functools
-import gc
+#import gc
 
 from savReaderWriter import *
 from generic import *
@@ -29,7 +29,6 @@ class Header(Generic):
     def __init__(self, savFileName, mode, refSavFileName, ioUtf8=False, ioLocale=None):
         """Constructor"""
         super(Header, self).__init__(savFileName, ioUtf8, ioLocale)
-        self.spssio = self.loadLibrary()
         self.fh = super(Header, self).openSavFile(savFileName, mode,
                                                   refSavFileName)
         self.varNames, self.varTypes = self.varNamesTypes
@@ -81,7 +80,7 @@ class Header(Generic):
     def freeMemory(self, funcName, *args):
         """Clean up: free memory claimed by e.g. getValueLabels and
         getVarNamesTypes"""
-        gc.collect()
+        #gc.collect()
         if segfaults:
             return
         #print("... freeing", funcName[8:])
