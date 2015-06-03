@@ -28,7 +28,7 @@ class Test_NonAsciiSavFileName(unittest.TestCase):
         self.u_savFileName = u"test_data/scheiß Encoding.sav"
         self.func(self.u_savFileName) 
 
-    unittest.skipIf(is_windows, "Chinese in a Western European windows?")
+    @unittest.skipIf(is_windows, "Chinese in a Western European windows?")
     def test_nonascii_u_filename_chinese(self):
         self.u_savFileName2 = u"test_data/響應投資豐盛生命計畫 募集百萬愛心.sav"
         self.func(self.u_savFileName2) 
