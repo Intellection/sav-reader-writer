@@ -6,8 +6,6 @@ import sys
 import savReaderWriter as rw
 from py3k import isPy3k, isCPython
 
-isWindows = sys.platform.startswith("win")  # no mx on appveyor
-
 class Test_spss2strDate(unittest.TestCase):
 
     def setUp(self):
@@ -33,7 +31,7 @@ class Test_spss2strDate(unittest.TestCase):
         self.assertEqual(b'03-02-1952', got)
 
     msg = "requires mx package (no Python 3 or Pypy)"
-    @unittest.skipIf(isPy3k or not isCPython or isWindows, msg)
+    @unittest.skipIf(isPy3k or not isCPython, msg)
     def test_datetime_pre1900(self):
         got = self.convert(0.0, "%Y-%m-%d %H:%M:%S", None)
         self.assertEqual(b'1582-10-14 00:00:00', got)
