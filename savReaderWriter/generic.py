@@ -43,10 +43,11 @@ class Generic(object):
         --------
         Effbot `http://effbot.org/pyref/sys.getfilesystemencoding.htm`_
         Python docs `http://docs.python.org/2/howto/unicode.html_ (under 'unicode filenames)"""
+        #import pdb; pdb.set_trace()
         if not isinstance(fn, unicode):
             return fn
         elif sys.platform.startswith("win"):
-            return self.wide2utf8(fn)
+            return self.wideCharToMultiByte(fn)
         else:
             encoding = sys.getfilesystemencoding()
             encoding = "utf-8" if not encoding else encoding  # actually, ascii
@@ -126,9 +127,9 @@ class Generic(object):
 
         return spssio
 
-    def wide2utf8(self, fn):
-        """Take a unicode file name string and encode it to a multibyte string
-        that Windows can use to represent file names (CP65001, UTF-8)
+    def wideCharToMultiByte(self, fn):
+        """Maps a wide character string to a new character filename string. 
+        The new character string is not necessarily from a multibyte character set. 
 
         See also
         --------
@@ -147,7 +148,7 @@ class Generic(object):
                                          wintypes.LPCWSTR, c_int,
                                          wintypes.LPSTR, c_int,
                                          wintypes.LPCSTR, _LPBOOL]
-        codePage = _CP_UTF8
+        codePage = _CP_ACP
         dwFlags = 0
         lpWideCharStr = fn
         cchWideChar = len(fn)
