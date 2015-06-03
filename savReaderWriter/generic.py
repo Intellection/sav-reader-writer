@@ -482,7 +482,7 @@ class Generic(object):
             func.argtypes = [c_int]
             retcode = func(int(ioUtf8))
             label = retcodes.get(retcode)
-            if retcode > 0 and label != b"SPSS_FILES_OPEN":
+            if retcode > 0 and label != "SPSS_FILES_OPEN":
                 msg = "Error setting IO interface [%s]"
                 raise SPSSIOError(msg % label)
         except TypeError:
