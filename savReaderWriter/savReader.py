@@ -586,7 +586,7 @@ class SavReader(Header):
         strptime-formats-settings
             :download:`__init__.py <../__init__.py>` to change the 
             strptime formats from ISO into something else. Note that dates 
-            before 1900 require the mx package, which is Python 2 only (2015).
+            before 1900 are *not* affected by format changes in `__init__.py`.
  
         :ref:`dateformats` : overview of SPSS datetime formats"""
         try:
@@ -601,9 +601,12 @@ class SavReader(Header):
 
             if theDate.year >= 1900 and is_normal_fmt:
                 return bytez(datetime.datetime.strftime(theDate, fmt))
-            elif is_normal_fmt:  # pre 1900: requires mx; no Python 3 and pypy
-                import mx.DateTime
-                return mx.DateTime.DateTimeFrom(theDate).strftime(fmt)
+            elif is_normal_fmt:
+                #import mx.DateTime  # Python 2 only (2015)
+                #return mx.DateTime.DateTimeFrom(theDate).strftime(fmt)
+                if "%H" in fmt:
+                    return bytez(theDate.isoformat(" "))
+                return bytez(theDate.isoformat().split("T")[0])
             elif is_time_fmt:
                 return bytez(str(delta).zfill(8))
             elif is_dtime_fmt: 
