@@ -31,11 +31,8 @@ class Generic(object):
         self.wholeCaseIn = self.spssio.spssWholeCaseIn
         self.wholeCaseOut = self.spssio.spssWholeCaseOut
 
-        self.encoding_and_locale_set = False
-        if not self.encoding_and_locale_set:
-            self.encoding_and_locale_set = True
-            self.ioLocale = ioLocale
-            self.ioUtf8 = bool(ioUtf8)  # bool() --> needed for UNICODE_BMODE
+        self.ioLocale = ioLocale
+        self.ioUtf8 = bool(ioUtf8)  # bool() --> needed for UNICODE_BMODE
 
     def _encodeFileName(self, fn):
         """Helper function to encode unicode file names into bytestring file
@@ -484,9 +481,10 @@ class Generic(object):
             func = self.spssio.spssSetInterfaceEncoding
             func.argtypes = [c_int]
             retcode = func(int(ioUtf8))
-            if retcode > 0 and not self.encoding_and_locale_set:
-                # not self.encoding_and_locale_set --> nested context managers
-                raise SPSSIOError("Error setting IO interface", retcode)
+            label = retcodes.get(retcode)
+            if retcode > 0 and label != b"SPSS_FILES_OPEN":
+                msg = "Error setting IO interface [%s]"
+                raise SPSSIOError(msg % label)
         except TypeError:
             raise Exception("Invalid interface encoding: %r (must be bool)")
         if retcode < 0:
