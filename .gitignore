@@ -10,4 +10,10 @@ junit-py*.xml
 cWriterow.cpython-*m.so
 MANIFEST
 .DS_Store
+.hidden
+*.png
+*.prof
+htmlcov
+.coverage
+.Rhistory
 
