@@ -1237,7 +1237,8 @@ class Header(Generic):
 
     @property
     @decode
-    def dateVariables(self):  # seems to be okay
+    def dateVariables(self):  # pragma: no cover  
+        # seems to be okay
         """Get/Set `DATE` information. This function reports the Forecasting
         (Trends) date variable information, if any, in IBM SPSS Statistics
         data files. Entirely untested and not implemented in reader/writer"""
@@ -1275,7 +1276,8 @@ class Header(Generic):
         return dateInfo
 
     @dateVariables.setter
-    def dateVariables(self, dateInfo):  # 'SPSS_INVALID_DATEINFO'!
+    def dateVariables(self, dateInfo):  # pragma: no cover
+        # always returns 'SPSS_INVALID_DATEINFO'! :-(
         dateInfo = [dateInfo["fixedDateInfo"]] + dateInfo["otherDateInfo"]
         dateInfo = reduce(list.__add__, dateInfo)  # flatten list
         isAllInts = all([isinstance(d, int) for d in dateInfo])
@@ -1359,7 +1361,7 @@ class Header(Generic):
             checkErrsWarns("Problem setting file label (id string)", retcode)
 
     @property
-    def queryType7(self):
+    def queryType7(self):  # pragma: no cover
         """This function can be used to determine whether a file opened for reading
         or append contains a specific "type 7" record. Returns a dictionary of the
         form: `{subtype_number: (subtype_label, present_or_not)}`, where
@@ -1387,7 +1389,7 @@ class Header(Generic):
         return type7info
 
     @property
-    def dataEntryInfo(self):
+    def dataEntryInfo(self):  # pragma: no cover
         """Get/Set information that is private to the Data Entry for Windows (DEW)
         product. Returns/takes a dictionary of the form:
         dataEntryInfo = {"data": [<list_of_dew_segments>], "GUID": <guid>},
@@ -1453,7 +1455,7 @@ class Header(Generic):
         return dict(data=dew_information, GUID=asciiGUID.value)
 
     @dataEntryInfo.setter
-    def dataEntryInfo(self, info):
+    def dataEntryInfo(self, info):  # pragma: no cover
         data, asciiGUID = info["data"], info["GUID"]
         # input validation
         is_ascii = all(map(lambda x: ord(x) < 128, asciiGUID))
