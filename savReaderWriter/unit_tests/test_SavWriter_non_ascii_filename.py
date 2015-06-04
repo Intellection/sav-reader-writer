@@ -6,6 +6,7 @@ import os
 import sys
 from os.path import basename, join
 import tempfile
+import zipfile
 import savReaderWriter as rw
 
 is_windows = sys.platform.startswith("win")
@@ -15,8 +16,8 @@ is_windows = sys.platform.startswith("win")
 class Test_NonAsciiSavFileName(unittest.TestCase):
 
     def func(self, savFileName):
-        self.outfile = join(tempfile.gettempdir(), 
-                            basename(savFileName))
+        
+        self.outfile = tempfile.mktemp(suffix="_out.sav")
         with rw.SavWriter(self.outfile, [b'v1'], {b'v1': 0}) as writer:
             for i in range(10):
                 writer.writerow([i])
@@ -25,17 +26,24 @@ class Test_NonAsciiSavFileName(unittest.TestCase):
         self.assertTrue(os.path.exists(self.outfile))
 
     def test_nonascii_u_filename_german(self):
-        self.u_savFileName = u"test_data/scheiß Encoding.sav"
-        self.func(self.u_savFileName) 
+        u_savFileName = u"test_data/scheiß Encoding.sav"
+        self.func(u_savFileName) 
 
     @unittest.skipIf(is_windows, "Chinese in a Western European windows?")
     def test_nonascii_u_filename_chinese(self):
-        self.u_savFileName2 = u"test_data/響應投資豐盛生命計畫 募集百萬愛心.sav"
-        self.func(self.u_savFileName2) 
+        # file is zipped: Chinese chars cause errors with .whl creation in Win
+        zipFileName = "test_data/chinese_chars.sav.zip" 
+        zf = zipfile.ZipFile(zipFileName)
+        u_savFileName = zf.infolist()[0].filename
+        u_savFileName = join(tempfile.gettempdir(), u_savFileName)
+        with open(u_savFileName, "wb") as f:
+            f.write(zf.read(basename(u_savFileName)))
+        self.func(u_savFileName) 
+        os.remove(u_savFileName)
 
     def test_nonascii_b_filename(self):
-        self.b_savFileName = b"test_data/schei\xdf Encoding.sav"
-        self.func(self.b_savFileName) 
+        b_savFileName = b"test_data/schei\xdf Encoding.sav"
+        self.func(b_savFileName) 
 
     def tearDown(self):
         try:
