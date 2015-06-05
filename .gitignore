@@ -16,4 +16,7 @@ MANIFEST
 htmlcov
 .coverage
 .Rhistory
+cover*
+_build
+_static
 
