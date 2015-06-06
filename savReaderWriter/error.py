@@ -108,7 +108,6 @@ if action not in actions:
    raise ValueError("If set, environment variable SAVRW_DISPLAY_WARNS must be"
                     " one of the following values:\n" % ", ".join(actions))
 warnings.filterwarnings(action, category=SPSSIOWarning)
-#warnings.simplefilter(action, SPSSIOWarning)
 
 def checkErrsWarns(msg, retcode):
     """Throws a warning if retcode < 0 (and warnings are not ignored),
