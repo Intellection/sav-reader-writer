@@ -20,8 +20,7 @@ class test_SPSSIOWarning(unittest.TestCase):
         os.environ["SAVRW_DISPLAY_WARNS"] = "always"
 
     # I have no idea why this works differently in Python 2
-    @unittest.skipIf(sys.version_info[0] < 3, "Python 2: Warnings different?")
-    @unittest.skipIf(warnings_are_ignored, "Warnings are ignored")
+    @unittest.skipIf(warnings_are_ignored, "Warnings are ignored")  # TODO: fix this
     def test_raises_SPSSIOWarning(self):
         module = rw if sys.version_info[0] > 2 else rw.error
         SPSSIOWarning = module.SPSSIOWarning  

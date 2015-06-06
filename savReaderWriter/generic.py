@@ -88,7 +88,7 @@ class Generic(object):
         # PermissionError: are the DLLs on a network share (e.g NAS)?
         return [load(os.path.join(path, lib)) for lib in libs][-1]
              
-    def loadLibrary(self):
+    def loadLibrary(self):  # pragma: no cover
         """This function loads and returns the SPSSIO libraries,
         depending on the platform."""
 
@@ -127,7 +127,7 @@ class Generic(object):
 
         return spssio
 
-    def wideCharToMultiByte(self, fn):
+    def wideCharToMultiByte(self, fn):  # pragma: no cover
         """Maps a wide character string to a new character filename string. 
         The new character string is not necessarily from a multibyte character set. 
 
