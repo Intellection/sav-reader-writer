@@ -7,35 +7,25 @@
 
 import unittest
 import os
-import sys
 import warnings
 import savReaderWriter as rw
 
-warnings_are_ignored = os.getenv("PYTHONWARNINGS") == "ignore"
+savrw_display_warns = os.getenv("SAVRW_DISPLAY_WARNS")
 
 class test_SPSSIOWarning(unittest.TestCase):
 
     def setUp(self):
         self.savFileName = "test_data/Employee data.sav"
-        os.environ["SAVRW_DISPLAY_WARNS"] = "always"
 
-    # I have no idea why this works differently in Python 2
-    @unittest.skipIf(warnings_are_ignored, "Warnings are ignored")  # TODO: fix this
+    msg = "Set SAVRW_DISPLAY_WARNS to 'default' or 'always' to test warnings"
+    @unittest.skipUnless(savrw_display_warns in ("default", "always"), msg)
     def test_raises_SPSSIOWarning(self):
-        module = rw if sys.version_info[0] > 2 else rw.error
-        SPSSIOWarning = module.SPSSIOWarning  
-        #with self.assertRaises(SPSSIOWarning) as e:
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as warn:
             with rw.SavHeaderReader(self.savFileName) as header:
                 metadata = str(header)
-                self.assertTrue(issubclass(w[-1].category, UserWarning))
-                self.assertTrue("SPSS_NO_CASEWGT" in str(w[-1].message))
-  
-    def tearDown(self):
-        try:
-            del os.environ["SAVRW_DISPLAY_WARNS"]
-        except:
-            pass
+                spss_warnings = [item.message for item in warn]
+                self.assertTrue(spss_warnings)
+                self.assertTrue("SPSS_NO_LABELS" in str(spss_warnings))
 
 if __name__ == "__main__":
     unittest.main()
