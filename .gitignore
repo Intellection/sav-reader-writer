@@ -15,6 +15,7 @@ MANIFEST
 *.prof
 htmlcov
 coverage-*/
+.coverage
 .Rhistory
 cover*
 _build
