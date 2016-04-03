@@ -1,8 +1,8 @@
 [run]
+parallel-mode = True
 branch = True
 package = 
     savReaderWriter
-parallel-mode = True
 
 [report]
 exclude_lines =
@@ -19,7 +19,7 @@ exclude_lines =
     # Return codes unequal to zero will cause warning or error
     # Is it a sensible thing to do to exclude this from coverage measurement?
     if retcode
-    
 omit = 
     *numpy*
     *_version*
+

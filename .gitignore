@@ -14,7 +14,7 @@ MANIFEST
 *.png
 *.prof
 htmlcov
-.coverage
+coverage-*/
 .Rhistory
 cover*
 _build
