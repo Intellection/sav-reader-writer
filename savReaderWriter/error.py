@@ -112,10 +112,11 @@ warnings.filterwarnings(action, category=SPSSIOWarning)
 def checkErrsWarns(msg, retcode):
     """Throws a warning if retcode < 0 (and warnings are not ignored),
     and throws an error if retcode > 0. Returns None if retcode == 0"""
+    SPSS_NO_TYPE73 = 41 # issue #40 "This code should be regarded as a warning"
     if not retcode:
         return
     msg += " [%s]" % retcodes.get(retcode, retcode)
-    if retcode > 0:
+    if retcode > 0 and retcode != SPSS_NO_TYPE73:
         raise SPSSIOError(msg, retcode)
-    elif retcode < 0:
+    else:
         warnings.warn(msg, SPSSIOWarning, stacklevel=2)
