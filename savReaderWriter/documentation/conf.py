@@ -13,7 +13,7 @@
 
 import sys, os
 
-def read(fname='VERSION'):
+def read(fname='VERSION.md'):
     return open(os.path.join("../", fname)).read().strip()
 
 # If extensions (or modules to document with autodoc) are in another directory,
