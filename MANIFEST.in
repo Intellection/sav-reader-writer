@@ -4,14 +4,10 @@ graft savReaderWriter/unit_tests
 graft savReaderWriter/test_data
 graft savReaderWriter/spssio
 #prune savReaderWriter/spssio
-#graft savReaderWriter/spssio/lin32
 include ez_setup.py
-include sha1version.py
-include savReaderWriter/SHA1VERSION
 include VERSION
-include TODO
 include COPYRIGHT
-global-exclude *.pyc *.*~
+global-exclude *.pyc *.*~ *~
 prune .git
 include versioneer.py
 include savReaderWriter/_version.py
