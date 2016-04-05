@@ -40,16 +40,16 @@ class test_SavReader_nested(unittest.TestCase):
                 unicode_writer.writerow(record[0:2])
         with SavReader(self.outfilename) as reader:
             actual_records = reader[:10]
-            desired_records = [[1.0, b'm       '],  # TODO: get rid of trailing 8-byte blanks
-                               [2.0, b'm       '],
-                               [3.0, b'f       '],
-                               [4.0, b'f       '],
-                               [5.0, b'm       '],
-                               [6.0, b'm       '],
-                               [7.0, b'm       '],
-                               [8.0, b'f       '],
-                               [9.0, b'f       '],
-                               [10.0, b'f       ']]
+            desired_records = [[1.0, b'm'],
+                               [2.0, b'm'],
+                               [3.0, b'f'],
+                               [4.0, b'f'],
+                               [5.0, b'm'],
+                               [6.0, b'm'],
+                               [7.0, b'm'],
+                               [8.0, b'f'],
+                               [9.0, b'f'],
+                               [10.0, b'f']]
  
             self.assertEqual(actual_records, desired_records)
 

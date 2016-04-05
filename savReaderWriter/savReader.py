@@ -22,21 +22,22 @@ class SavReader(Header):
     ---------- 
     savFileName : str
         the file name of the spss data file
-    returnHeader : bool
+    returnHeader : bool, default False
         indicates whether the first record should be a list of variable names
-    recodeSysmisTo: (value)
-        indicates to which value missing values should be recoded
-    selectVars : list
+    recodeSysmisTo: (value), default None
+        indicates to which value SPSS missing values (`$sysmis`) should be 
+        recoded. Any value below 10 ** -10 is returned as None 
+    verbose : bool, default False
+        indicates whether information about the spss data file (e.g., number
+        of cases, variable names, file size) should be printed on the screen.
+    selectVars : list or None, default None
         indicates which variables in the file should be selected.
         The variables should be specified as a list of valid variable names.
         If ``None`` is specified, all the variables in the file are used
-    idVar : str
+    idVar : str or None, default None
         indicates which variable in the file should be used for use as id
         variable for the 'get' method
-    verbose : bool
-        indicates whether information about the spss data file (e.g., number
-        of cases, variable names, file size) should be printed on the screen.
-    rawMode : bool
+    rawMode : bool, default False
         indicates whether values should get SPSS-style formatting, and whether
         date variables (if present) should be converted into ISO-dates. If set
         to ``True`` the program does not format any values, which increases 
@@ -47,13 +48,13 @@ class SavReader(Header):
         * SPSS `$sysmis` values will not be converted into ``None`` values
         * String values will be ceiled multiples of 8 bytes
         See also :ref:`formats` and :ref:`dateformats`
-    ioUtf8 : bool
+    ioUtf8 : bool, default False
         indicates the mode in which text communicated to or from the I/O 
         Module will be. Valid values are True (UTF-8 mode aka Unicode mode)
         and False (Codepage mode). Cf. `SET UNICODE=ON/OFF`.
         See also under :py:meth:`savReaderWriter.Generic.ioUtf8` and under
         ``ioUtf8`` in :py:class:`savReaderWriter.SavWriter`.
-    ioLocale : locale str
+    ioLocale : str or None, default None
         indicates the locale of the I/O module. Cf. `SET LOCALE` (default
         = ``None``, which corresponds to 
         ``locale.setlocale(locale.LC_CTYPE)``, for example: 
@@ -199,53 +200,57 @@ class SavReader(Header):
         iterating over each individual value is really needed"""
         hasDates = bool(set(self.bareformats.values()) & set(supportedDates))
         hasNfmt = b"N" in list(self.bareformats.values())
-        hasRecodeSysmis = self.recodeSysmisTo is not None
-        items = [hasDates, hasNfmt, hasRecodeSysmis, self.ioUtf8_]
-        return False if any(items) else True
+        hasStrings = any(self.varTypes.values())
+        #hasRecodeSysmis = self.recodeSysmisTo is not None
+        return not any([hasDates, hasNfmt, hasStrings, self.ioUtf8_])
 
     # TODO: turn this into a decorator
     def formatValues(self, record):
         """This function formats date fields to ISO dates (yyyy-mm-dd), plus
         some other date/time formats. The SPSS N format is formatted to a
         character value with leading zeroes. System missing values are recoded
-        to <recodeSysmisTo>. If rawMode==True, this function does nothing"""
-        if self.rawMode or self.autoRawMode:
+        to <recodeSysmisTo>, which defaults to `None`. If rawMode==True, 
+        this function does nothing"""
+        sysmis = self.sysmis
+        if self.rawMode:
             return record  # 6-7 times faster!
-        for i, value in enumerate(record):
-            varName = self.header[i]
-            varType = self.varTypes[varName]
-            bareformat_ = self.bareformats[varName]
-            varWid = self.varWids[varName]
-            if varType == 0:
-                # recode system missing values, if present and desired
-                if value > self.sysmis_:
-                    pass
-                else:
-                    record[i] = self.recodeSysmisTo
-                # format N-type values (=numerical with leading zeroes)
-                if bareformat_ in (b"N", u"N"):
-                    #record[i] = str(value).zfill(varWid)
-                    nfmt_value = "%%0%dd" % varWid % value  #15 x faster (zfill)
-                    nfmt_value = nfmt_value if self.ioUtf8 == 1 else bytez(nfmt_value)
-                    record[i] = nfmt_value  #15 x faster (zfill)
-                # convert SPSS dates to ISO dates
-                elif bareformat_ in supportedDates:
-                    fmt = supportedDates[bareformat_]
-                    args = (value, fmt, self.recodeSysmisTo)
-                    record[i] = self.spss2strDate(*args)
-                    if bareformat_ == b"QYR" and record[i]:
-                        # convert month to quarter, e.g. 12 Q 1990 --> 4 Q 1990
-                        # There is no such thing as a %q strftime directive
-                        try:
-                            record[i] = QUARTERS[record[i][:2]] + record[i][2:]
-                        except (KeyError, TypeError):
-                            record[i] = self.recodeSysmisTo
-            elif varType > 0:
-                value = value[:varType]
-                if self.ioUtf8_:
-                    record[i] = value.decode("utf-8")
-                else:
-                    record[i] = value
+        elif self.autoRawMode:
+            # only recode SPSS $sysmis to Python None
+            return [None if item <= sysmis else item for item in record]
+        else:
+            for i, value in enumerate(record):
+                varName = self.header[i]
+                varType = self.varTypes[varName]
+                bareformat_ = self.bareformats[varName]
+                varWid = self.varWids[varName]
+                if varType == 0:
+                    # recode system missing values, if present and desired
+                    if value <= sysmis:
+                        record[i] = self.recodeSysmisTo
+                    # format N-type values (=numerical with leading zeroes)
+                    if bareformat_ in (b"N", u"N"):
+                        #record[i] = str(value).zfill(varWid)
+                        nfmt_value = "%%0%dd" % varWid % value  #15 x faster (zfill)
+                        nfmt_value = nfmt_value if self.ioUtf8 == 1 else bytez(nfmt_value)
+                        record[i] = nfmt_value  #15 x faster (zfill)
+                    # convert SPSS dates to ISO dates
+                    elif bareformat_ in supportedDates:
+                        fmt = supportedDates[bareformat_]
+                        args = (value, fmt, self.recodeSysmisTo)
+                        record[i] = self.spss2strDate(*args)
+                        if bareformat_ == b"QYR" and record[i]:
+                            # convert month to quarter, e.g. 12 Q 1990 --> 4 Q 1990
+                            # There is no such thing as a %q strftime directive
+                            try:
+                                record[i] = QUARTERS[record[i][:2]] + record[i][2:]
+                            except (KeyError, TypeError):
+                                record[i] = self.recodeSysmisTo
+                elif varType > 0:
+                    value = value.rstrip()
+                    if self.ioUtf8_:
+                        record[i] = value.decode("utf-8")
+                    else:
+                        record[i] = value
         return record
 
     def _items(self, start=0, stop=None, step=1, returnHeader=False):

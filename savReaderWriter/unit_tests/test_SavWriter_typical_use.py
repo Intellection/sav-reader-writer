@@ -8,6 +8,8 @@
 import unittest
 import os
 import tempfile
+import copy
+
 from savReaderWriter import *
 
 class test_SavWriter_typical_use(unittest.TestCase):
@@ -23,12 +25,10 @@ class test_SavWriter_typical_use(unittest.TestCase):
         records_in = [[b'Test1', 1, 1, b'2010-08-11'],
                       [b'Test2', 2, 1, b'1910-01-12']]
         with SavWriter(*self.args) as writer:
-            for record in records_in:
+            for record in copy.deepcopy(records_in):
                 writer.writerow(record)
-
         with SavReader(self.savFileName) as reader:
-            records_out = [line for line in iter(reader)]
-
+            records_out = [line for line in reader]
         self.assertEqual(records_in, records_out)
 
     def tearDown(self):
