@@ -6,6 +6,17 @@ import os
 import time
 import locale
 
+try:
+    pandasOK = True
+    import pandas as pd
+except ImportError:
+    pandasOK = False
+try:
+    numpyOK = True
+    import numpy as np
+except ImportError:
+    numpyOK = False
+
 from savReaderWriter import *
 from py3k import *
 from header import *
@@ -375,6 +386,36 @@ class SavWriter(Header):
         self._pyWriterow(record)
 
     def writerows(self, records):
-        """ This function writes all records."""
-        for record in records:
-            self.writerow(record)
+        """This function writes all records.
+        
+        Parameters
+        ----------
+        records : list, tuple, numpy.ndarray, pandas.DataFrame, or similar
+            the records to be written to the .sav file
+            
+        Raises
+        ------
+        TypeError : if the records instance is not of a suitable type
+        """
+        if numpyOK and isinstance(records, np.ndarray):  # issue #25
+            records = np.where(np.isnan(records), self.sysmis, records)
+            for i in range(len(records)):
+                record = records[i].tolist()
+                self.writerow(record)
+        elif pandasOK and isinstance(records, pd.DataFrame):
+            records[records.isnull()] = self.sysmis
+            for record in records.itertuples(index=False):
+                self.writerow(list(record))
+        elif not hasattr(records[0], "__setitem__"):  # (named)tuple
+            for record in records:
+                self.writerow(list(record))  # need item assignment
+        else:
+            try:
+                for record in records:
+                    self.writerow(record)
+            except:
+                if not isinstance(records, (tuple, list, np.array, pd.DataFrame)):
+                    msg = ('records instance type must be one of list, tuple, ' 
+                           'numpy.array, pandas.DataFrame but got %s')
+                    raise TypeError( msg % (type(records), ))
+                raise
