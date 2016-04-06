@@ -15,45 +15,13 @@ Welcome to savReaderWriter's documentation!
 .. _`International License Agreement`: ./_static/LA_en.txt
 .. _`OS X and Python locale snippet`: ./_static/mac_os_x_locale_quirks.txt
 
-In the documentation below, the associated SPSS commands are given in ``CAPS``.
-See also the `IBM SPSS Statistics Command Syntax Reference.pdf`_ for info about SPSS syntax.
-
-.. raw:: html
-
-    <embed>
-    </p>I always appreciate getting
-    <script type="text/javascript" language="javascript">
-    <!--
-    // Email obfuscator script 2.1 by Tim Williams, University of Arizona
-    // Random encryption key feature by Andrew Moulden, Site Engineering Ltd
-    // This code is freeware provided these four comment lines remain intact
-    // A wizard to generate this code is at http://www.jottings.com/obfuscator/
-    { coded = "KNMT1@S8oNN.TNM"
-      key = "NVXDIRH5nwJ1dLckfsjZFzbCv79xYTWKh3qytUuam0O4PpioEASG628MerlQgB"
-      shift=coded.length
-      link=""
-      for (i=0; i<coded.length; i++) {
-        if (key.indexOf(coded.charAt(i))==-1) {
-          ltr = coded.charAt(i)
-          link += (ltr)
-        }
-        else {     
-          ltr = (key.indexOf(coded.charAt(i))-shift+key.length) % key.length
-          link += (key.charAt(ltr))
-        }
-      }
-    document.write("<a href='mailto:"+link+"?subject=feedback on savReaderWriter'>feedback</a>")
-    }
-    //-->
-    </script><noscript>Sorry, you need Javascript on to email me.</noscript>
-    on this package, so I can keep improving it!</p>
-    </embed>
 
 .. seealso::
 
-   The :mod:`savReaderWriter` program uses the SPSS I/O module (``.so``, ``.dll``, ``.dylib``, depending on your Operating  System). Users of the SPSS I/O
-   module should read the `International License Agreement`_ before using the SPSS I/O module. By downloading, installing, copying, accessing, or otherwise
-   using the  SPSS I/O module, licensee agrees to the terms of this agreement. Copyright © IBM Corporation™ 1989, 2012 --- all rights reserved.
+   * In the documentation below, the associated SPSS commands are given in ``CAPS``. See also the `IBM SPSS Statistics Command Syntax Reference.pdf`_ for info about SPSS syntax.
+   * The :mod:`savReaderWriter` program uses the SPSS I/O module (``.so``, ``.dll``, ``.dylib``, depending on your Operating  System). Users of the SPSS I/O
+     module should read the `International License Agreement`_ before using the SPSS I/O module. By downloading, installing, copying, accessing, or otherwise
+     using the  SPSS I/O module, licensee agrees to the terms of this agreement. Copyright © IBM Corporation™ 1989, 2012 --- all rights reserved.
 
 Installation
 ============================================================================
@@ -75,7 +43,7 @@ The program can be installed by running::
 
 Or alternatively::
 
-    pip install savReaderWriter --allow-all-external
+    pip install savReaderWriter
 
 To get the 'bleeding edge' version straight from the repository do::
 
@@ -163,16 +131,17 @@ Enviroment variables
 Typical use (the TLDR version)
 ------------------------------
 
-The full documentation can be found in the :ref:`generated-api-documentation`.
-Here are the most important parts::
-    
-    # ---- reading files    
+The full documentation can be found in the :ref:`generated-api-documentation`. Here are the most important parts
+
+**Reading files**:: 
+
     with SavReader('someFile.sav', returnHeader=True) as reader:
         header = reader.next()
         for line in reader:
             process(line)
+            
+**Writing files**::   
 
-    # ---- writing files    
     savFileName = 'someFile.sav'
     records = [[b'Test1', 1, 1], [b'Test2', 2, 1]]
     varNames = ['var1', 'v2', 'v3']
@@ -181,19 +150,31 @@ Here are the most important parts::
         for record in records:
             writer.writerow(record)
 
-    # ---- reading file metadata
+**Writing numpy arrays, pandas DataFrames, lists-of-lists, etc**:: 
+
+    savFileName = 'output_np.sav'
+    args = ( ["v1", "v2"], dict(v1=0, v2=0) )
+    data = [range(10), range(10, 20)]
+    array = np.array(data, dtype=np.float64).reshape(10, 2)
+    array[0, 0] = np.nan
+    with SavWriter(savFileName, *args) as writer:
+        writer.writerows(array)
+
+**Reading file metadata**:: 
+
     with SavHeaderReader(savFileName) as header:
         metadata = header.dataDictionary(True)
         report = str(header)
         print(report)
 
-    # ---- reading into numpy arrays
-    reader_np = SavReaderNp('Employee data.sav")
-    array = reader_np.to_structured_array()
-    mean_salary = array["salary"].mean()
-    reader_np.close()
+**Reading files into numpy arrays**:: 
 
-    # ---- reading a file in unicode mode (default in SPSS v21 and up)
+    with SavReaderNp("Employee data.sav") as reader_np:
+        array = reader_np.to_structured_array()
+    mean_salary = array["salary"].mean()
+
+**Reading a file in unicode mode (default in SPSS v21 and up)**:: 
+
     >>> with SavReader('greetings.sav', ioUtf8=True) as reader:
     ...    for record in reader:
     ...        print(record[-1])
@@ -208,7 +189,11 @@ Here are the most important parts::
     สวัสดี                                
     Bondjoû  
 
-    # ---- reading a file in codepage mode
+**Reading a file in codepage mode**
+
+This could be needed when the file was created under an older SPSS for Windows version,
+which used codepage mode. Usually this means that (meta)data are encoded as windows-1252:: 
+
     # wrong: variables with accented characters are returned as v1, v2, v3
     >>> with SavHeaderReader('german.sav') as header:
     ...     print(header.varNames)
@@ -220,10 +205,6 @@ Here are the most important parts::
     >>> with SavHeaderReader('german.sav', ioLocale='de_DE.cp1252') as header:
     ...     print(header.varNames)
     [b'python', b'programmieren', b'macht', b'\xfcberhaupt', b'v\xf6llig', b'spa\xdf']
-
-.. warning::
-
-   The program calls ``spssFree*`` C functions to free memory allocated to dynamic arrays. This previously sometimes caused segmentation faults. This problem now appears to be solved. However, if you do experience segmentation faults you can set ``segfaults=True`` in ``__init__.py``. This will prevent the spssFree* functions from being called (and introduce a memory leak).
 
 
 .. _formats:
