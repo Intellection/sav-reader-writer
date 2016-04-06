@@ -5,6 +5,7 @@ from ctypes import *
 import os
 import time
 import locale
+from collections import Iterable
 
 try:
     pandasOK = True
@@ -396,25 +397,41 @@ class SavWriter(Header):
         Raises
         ------
         TypeError : if the records instance is not of a suitable type
+        ValueError : if bool(records) == False, or if the array/DataFrame 
+            is empty
         """
-        if numpyOK and isinstance(records, np.ndarray):  # issue #25
+        def is_empty(records):
+            if hasattr(records, "empty"):   # pandas
+                return records.empty
+            elif hasattr(records, "size"):  # numpy
+                return not records.size
+            else:
+                return not records
+                
+        if is_empty(records):                   
+            raise ValueError("No data")
+            
+
+        elif numpyOK and isinstance(records, np.ndarray):  # issue #25
             records = np.where(np.isnan(records), self.sysmis, records)
             for i in range(len(records)):
-                record = records[i].tolist()
-                self.writerow(record)
+                self.writerow( records[i].tolist() )
         elif pandasOK and isinstance(records, pd.DataFrame):
             records[records.isnull()] = self.sysmis
             for record in records.itertuples(index=False):
                 self.writerow(list(record))
-        elif not hasattr(records[0], "__setitem__"):  # (named)tuple
-            for record in records:
+        elif isinstance(records, Iterable) and hasattr(records[0], "__iter__"):
+            for record in records:           # (named)tuple
                 self.writerow(list(record))  # need item assignment
         else:
             try:
                 for record in records:
                     self.writerow(record)
             except:
-                if not isinstance(records, (tuple, list, np.array, pd.DataFrame)):
+                types = (tuple, list)
+                if numpyOK: types += (np.array, )
+                if pandasOK: types += (pd.DataFrame,)
+                if not isinstance(records, types):
                     msg = ('records instance type must be one of list, tuple, ' 
                            'numpy.array, pandas.DataFrame but got %s')
                     raise TypeError( msg % (type(records), ))

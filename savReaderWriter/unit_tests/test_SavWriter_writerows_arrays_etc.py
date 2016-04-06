@@ -1,15 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr  5 17:47:38 2016
-
-@author: albertjan
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Writing rows from arrays et al.
-
-@author: albertjan
 """
 
 
@@ -21,7 +12,7 @@ from collections import namedtuple
 from unittest.case import SkipTest
 
 import nose
-from nose.tools import with_setup
+from nose.tools import with_setup, assert_raises
 
 try:
     pandasOK = True
@@ -92,15 +83,33 @@ def test_writerows_namedtuple():
  
 def test_writerows_tuple():
     records = tuple([tuple(record) for record in desired])
-    savFileName = "output_regular.sav"
+    savFileName = "output_tuple.sav"
     with srw.SavWriter(savFileName, *args) as writer:
         writer.writerows(records)
     with srw.SavReader(savFileName) as reader:
         actual = reader.all()
     assert actual == desired, actual
 
+def test_writerows_erroneous_flat_n():
+    records = [0, 1]  # wrong!
+    savFileName = "output_error1.sav"
+    with srw.SavWriter(savFileName, *args) as writer:
+        assert_raises(TypeError, writer.writerows, records)
+
+def test_writerows_erroneous_flat_s():
+    records = ["a", "b"]  # wrong!
+    string_args = ["v1", "v2"], dict(v1=1, v2=1)
+    savFileName = "output_error2.sav"
+    with srw.SavWriter(savFileName, *string_args) as writer:
+        assert_raises(TypeError, writer.writerows, records)
+
+def test_writerows_erroneous_flat_empty():
+    records = []  # wrong!
+    string_args = ["v1", "v2"], dict(v1=1, v2=1)
+    savFileName = "output_error3.sav"
+    with srw.SavWriter(savFileName, *string_args) as writer:
+        assert_raises(ValueError, writer.writerows, records)
         
 if __name__ == "__main__":
 
     nose.main()
-    test_writerows_namedtuple()
