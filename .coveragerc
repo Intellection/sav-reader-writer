@@ -1,8 +1,6 @@
 [run]
-parallel-mode = True
+parallel = True
 branch = True
-package = 
-    savReaderWriter
 
 [report]
 exclude_lines =
