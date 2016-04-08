@@ -54,7 +54,7 @@ class Generic(object):
         try:
             return fn.encode(encoding)
         except UnicodeEncodeError:
-            msg = ("File system encoding %r can not be used to " +
+            msg = ("File system encoding %r can not be used to "
                    "encode file name %r [%s]")
             raise ValueError(msg % (encoding, fn, sys.exc_info()[1]))
 
@@ -412,7 +412,7 @@ class Generic(object):
         if hasattr(self, "setLocale"):
             return self.setLocale
         else:
-            localeName = ".".join(locale.setlocale(locale.LC_CTYPE))
+            localeName = locale.setlocale(locale.LC_CTYPE)
             msg = "NOTE. Locale not set; getting current locale: %s"
             print(msg % localeName)
             return localeName
@@ -454,11 +454,11 @@ class Generic(object):
         msg = "Error testing encoding compatibility: %r" % isCompatible.value
         checkErrsWarns(msg, retcode)
         if not isCompatible.value and not self.ioUtf8:
-            msg = ("NOTE. SPSS Statistics data file %r is written in a " +
-                   "character encoding (%s) incompatible with the current " +
-                   "ioLocale setting. It may not be readable. Consider " +
+            msg = ("NOTE. SPSS Statistics data file %r is written in a "
+                   "character encoding (%s) incompatible with the current "
+                   "ioLocale setting (%s). It may not be readable. Consider "
                    "changing ioLocale or setting ioUtf8=True.")
-            print(msg % (self.savFileName, self.fileEncoding))
+            print(msg % (self.savFileName, self.fileEncoding, self.ioLocale))
         return bool(isCompatible.value)
 
     @property
@@ -535,8 +535,10 @@ class Generic(object):
         try:
             self.pack_into(self.caseBuffer, 0, *record)
         except struct.error:
-            msg = "Use ioUtf8=True to write unicode strings [%s]"
-            raise TypeError(msg % sys.exc_info()[1])
+            msg = sys.exc_info()[1]
+            if any([isinstance(value, unicode) for value in record]):
+                msg +=  ". Use ioUtf8=True to write unicode strings"
+            raise TypeError(msg)
         self.wholeCaseOut.argtypes = [c_int, c_char_p]
         retcode = self.wholeCaseOut(self.fh, c_char_py3k(self.caseBuffer.raw))
         if retcode:

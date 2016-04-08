@@ -803,11 +803,16 @@ class Header(Generic):
         func = self.spssio.spssSetVariableSets
         func.argtypes = [c_int, c_char_p]   
 
+        encoding = self.fileEncoding
         varSets_ = []
         for varName, varSet in varSets.items():
-            varName = varName.decode(self.fileEncoding)
-            varSet = (b" ".join(varSet)).decode(self.fileEncoding)
-            varSets_.append(("%s= %s" % (varName, varSet)).encode(self.fileEncoding))
+            if isinstance(varName, bytes):
+                varName = varName.decode(encoding)
+            varSet = " ".join( [item.decode(encoding) 
+                                if isinstance(item, bytes) else item 
+                                for item in varSet] )
+            pair = "%s= %s" % (varName, varSet)
+            varSets_.append((pair).encode(encoding))
 
         varSets_ = c_char_py3k(b"\n".join(varSets_))
         retcode = func(self.fh, varSets_)
