@@ -91,7 +91,7 @@ def test_writerows_tuple():
     assert actual == desired, actual
 
 def test_writerows_erroneous_flat_n():
-    records = [0, 1]  # wrong!
+    records = [0, 1]  # wrong!,
     savFileName = "output_error1.sav"
     with srw.SavWriter(savFileName, *args) as writer:
         assert_raises(TypeError, writer.writerows, records)

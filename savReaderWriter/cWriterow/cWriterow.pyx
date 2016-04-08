@@ -9,13 +9,12 @@ def cWriterow(self, record):
     Faster implementation of the _pyWriterow method."""
     cdef int varType
     cdef Py_ssize_t i
-    float_ = float
     for i, value in enumerate(record):
         varName = self.varNames[i]
         varType = self.varTypes[varName]
         if varType == 0:
             try:
-                value = float_(value)
+                value = float(value)
             except (ValueError, TypeError):
                 value = self.sysmis_
         else:
