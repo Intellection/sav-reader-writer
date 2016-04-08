@@ -46,7 +46,7 @@ class Generic(object):
         #import pdb; pdb.set_trace()
         if not isinstance(fn, unicode):
             return fn
-        elif sys.platform.startswith("win"):
+        elif sys.platform.startswith("win"):  # pragma: no cover
             return self.wideCharToMultiByte(fn)
         else:
             encoding = sys.getfilesystemencoding()
@@ -65,7 +65,7 @@ class Generic(object):
         # Using regex patterns ought to be more resilient to updates of the
         # I/O modules, compared to hardcoding the names
         debug = False
-        if getattr(sys, 'frozen', False):
+        if getattr(sys, 'frozen', False):  # pragma: no cover
             # The application is frozen by cx_freeze
             path = os.path.dirname(sys.executable)
             path = os.path.join(path, "savReaderWriter", "spssio", folder)
@@ -82,7 +82,7 @@ class Generic(object):
                     (\.\d+)*\.dylib)$      # mac""" # filter out non-libs
         libs = [lib for lib in libs if re.match(isLib, lib, re.I | re.X)]
         load = WinDLL if sys.platform.lower().startswith("win") else CDLL
-        if libs and debug:
+        if libs and debug:  # pragma: no cover
             print(os.path.basename(path).upper().center(79, "-"))
             print("\n".join(libs))
         # PermissionError: are the DLLs on a network share (e.g NAS)?
@@ -185,7 +185,7 @@ class Generic(object):
                     "cp": self.spssio.spssOpenWriteCopy,
                     "ab": self.spssio.spssOpenAppend}.get(mode)
         if not spssOpen:
-            raise ValueError("Invalid mode argument: %r")
+            raise ValueError("Invalid mode argument: %r" % mode)
 
         # get a file descriptor/handle for the file
         expanduser, abspath = os.path.expanduser, os.path.abspath
@@ -250,7 +250,7 @@ class Generic(object):
     @property
     def spssVersion(self):
         """Return the SPSS version that was used to create the opened file
-        as a three-tuple indicating major, minor, and fixpack version as
+        as a three-tuple indicating major, minor, and fixpack version asunde
         ints. NB: in the transition from SPSS to IBM, a new four-digit
         versioning nomenclature is used. This function returns the old
         three-digit nomenclature. Therefore, no patch version information
@@ -331,9 +331,9 @@ class Generic(object):
         elif mode == b"wb":                 # derive endianness from host
             if sys.byteorder == "little":
                 endianness = "<"
-            elif sys.byteorder == "big":
+            elif sys.byteorder == "big":  # pragma: no cover
                 endianness = ">"
-            else:
+            else:                         # pragma: no cover
                 endianness = "@"
         structFmt = [endianness]
         ceil = math.ceil
@@ -541,12 +541,3 @@ class Generic(object):
         retcode = self.wholeCaseOut(self.fh, c_char_py3k(self.caseBuffer.raw))
         if retcode:
             checkErrsWarns("Problem writing row\n" + record, retcode)
-
-    def printPctProgress(self, nominator, denominator):
-        """This function prints the % progress when reading and writing
-        files"""
-        if nominator and nominator % 10**4 == 0:
-            pctProgress = (float(nominator) / denominator) * 100
-            sys.stdout.write("%2.1f%%...\r" % pctProgress )
-            sys.stdout.flush()
-
