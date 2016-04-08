@@ -378,13 +378,16 @@ class Generic(object):
         a similar way as the LO and HI keywords in missing values
         specifications (cf. `MISSING VALUES foo (LO THRU 0)`. It may be called
         at any time."""
-        lowest, highest = c_double(), c_double()
-        func = self.spssio.spssLowHighVal
-        func.argtypes = [POINTER(c_double), POINTER(c_double)] 
-        retcode = func(byref(lowest), byref(highest))
-        checkErrsWarns("Problem getting min/max missing values", retcode)
-        ranges = (lowest.value, highest.value)
-        return collections.namedtuple("MissingValueRange", "lo hi")(*ranges)
+        Range = collections.namedtuple("MissingValueRange", "lo hi")
+        try:
+            lowest, highest = c_double(), c_double()
+            func = self.spssio.spssLowHighVal
+            func.argtypes = [POINTER(c_double), POINTER(c_double)] 
+            retcode = func(byref(lowest), byref(highest))
+            checkErrsWarns("Problem getting min/max missing values", retcode)
+            return Range(lowest.value, highest.value)
+        except SPSSIOError:  # Windows, maybe more
+            return Range(-sys.float_info.max, sys.float_info.max)
 
     @property
     def ioLocale(self):
