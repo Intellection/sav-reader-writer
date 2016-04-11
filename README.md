@@ -11,13 +11,13 @@ installation:
 
 Or alternatively:
 
-    pip install savReaderWriter --allow-all-external
+    pip install savReaderWriter
 
 To get the 'bleeding edge' version straight from the repository do:
 
     pip install -U -e git+https://bitbucket.org/fomcl/savreaderwriter.git#egg=savreaderwriter
 
 
-Unittests are usually run on Linux Debian 7 64. Windows unittest and build results may be viewed here:
+Unittests are usually run on Linux Debian 8 64. Windows unittest and build results may be viewed here:
 
 [![Build status](https://ci.appveyor.com/api/projects/status/6chl9f5x27t37s3f?svg=true)](https://ci.appveyor.com/project/AlbertJan68345/savreaderwriter)

@@ -120,7 +120,7 @@ setup(name='savReaderWriter',
                    'Programming Language :: Python :: 3.4', 
                    'Programming Language :: Python :: 3.5', 
                    'Programming Language :: Cython',
-                   'Programming Language :: Python :: Implementation :: CPython'
+                   'Programming Language :: Python :: Implementation :: CPython',
                    'Programming Language :: Python :: Implementation :: PyPy',
                    'Topic :: Database'],
       version=versioneer.get_version(),
