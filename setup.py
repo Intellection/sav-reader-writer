@@ -63,7 +63,7 @@ if is_install_mode:
     elif pf.startswith("aix") and not is_32bit:
         package_data['savReaderWriter'].append('spssio/aix64/*.*')
     elif pf.startswith("hp-ux"):
-        package_data['savReaderWriter'].append('spssio/hp-ux/*.*')
+        package_data['savReaderWriter'].append('spssio/hpux_it/*.*')
     elif pf.startswith("sunos") and not is_32bit:
         package_data['savReaderWriter'].append('spssio/sol64/*.*')
     else:
