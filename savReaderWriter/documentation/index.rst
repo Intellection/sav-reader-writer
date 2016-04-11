@@ -79,6 +79,12 @@ To get the 'bleeding edge' version straight from the repository do::
       [4.0, 'f', '1947-04-15', 8.0, 1.0, 21900.0, 13200.0, 98.0, 190.0, 0.0]
       # etc. etc.
 
+   **Users of AIX, Solaris, HP-UX, zLinux** need to install the SPSS I/O libraries separately (Pypi has a file size limit of about 60 Mb, so I had to exclude them - sorry):
+
+     .. code:: sh
+
+      python -m savReaderWriter.util.download_mainframe_libs
+     
 .. versionchanged:: 3.4
 
 * Added ``SavReaderNp``, a class to convert .sav files to numpy arrays
@@ -90,7 +96,7 @@ To get the 'bleeding edge' version straight from the repository do::
       python -m savReaderWriter.util.savViewer
       python -m savReaderWriter.util.savViewer '/path/to/some/file.sav'
 
-* Removed several bugs, notably one related to memoization of SPSS datetimes
+* Removed several bugs, notably one related to memoization of SPSS datetimes (THANKS everybody for taking the time to report these bugs!)
 * `SavReader.__enter__` now returns `self`, not `iter(self)`
 
 .. versionchanged:: 3.3
@@ -128,7 +134,7 @@ Enviroment variables
 
 **DYLD_LIBRARY_PATH.** Users of Mac OSX need to set this variable, see elsewhere in this documentation.
 
-Typical use (the TLDR version)
+Typical use (the TL;DR version)
 ------------------------------
 
 The full documentation can be found in the :ref:`generated-api-documentation`. Here are the most important parts
@@ -152,20 +158,19 @@ The full documentation can be found in the :ref:`generated-api-documentation`. H
 
 **Writing numpy arrays, pandas DataFrames, lists-of-lists, etc**:: 
 
-    savFileName = 'output_np.sav'
+    savFileName = 'someFile.sav'
     args = ( ["v1", "v2"], dict(v1=0, v2=0) )
-    data = [range(10), range(10, 20)]
-    array = np.array(data, dtype=np.float64).reshape(10, 2)
-    array[0, 0] = np.nan
+    array = np.arange(10, dtype=np.float64).reshape(5, 2)
     with SavWriter(savFileName, *args) as writer:
         writer.writerows(array)
 
 **Reading file metadata**:: 
 
     with SavHeaderReader(savFileName) as header:
-        metadata = header.dataDictionary(True)
+        metadata = header.all()
         report = str(header)
-        print(report)
+    print(metadata.valueLabels)
+    print(report)
 
 **Reading files into numpy arrays**:: 
 
@@ -191,8 +196,9 @@ The full documentation can be found in the :ref:`generated-api-documentation`. H
 
 **Reading a file in codepage mode**
 
-This could be needed when the file was created under an older SPSS for Windows version,
-which used codepage mode. Usually this means that (meta)data are encoded as windows-1252:: 
+This could be needed when the file was created using an older SPSS for Windows version,
+which used codepage mode. Usually this means that (meta)data are encoded as windows-1252.
+In Linux, you may need to generate a locale with a windows encoding:: 
 
     # wrong: variables with accented characters are returned as v1, v2, v3
     >>> with SavHeaderReader('german.sav') as header:
