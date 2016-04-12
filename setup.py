@@ -24,6 +24,8 @@ versioneer.versionfile_source = 'savReaderWriter/_version.py'
 versioneer.versionfile_build = 'savReaderWriter/_version.py'
 versioneer.tag_prefix = 'v'  # tags are like v1.2.0
 versioneer.parentdir_prefix = 'savReaderWriter-'
+version = versioneer.get_version()
+#version = "3.4.2"
 
 
 #####
@@ -93,7 +95,7 @@ setup(name='savReaderWriter',
       maintainer='Albert-Jan Roskam',
       maintainer_email=email,
       license='MIT',
-      long_description=read('README.md'),
+      long_description=read('README'),
       zip_safe=False,
       platforms=['Windows', 'MacOS', 'POSIX'],
       url='https://bitbucket.org/fomcl/savreaderwriter',
@@ -123,6 +125,6 @@ setup(name='savReaderWriter',
                    'Programming Language :: Python :: Implementation :: CPython',
                    'Programming Language :: Python :: Implementation :: PyPy',
                    'Topic :: Database'],
-      version=versioneer.get_version(),
+      version=version,
       cmdclass=versioneer.get_cmdclass()
       )

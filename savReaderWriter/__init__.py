@@ -43,7 +43,7 @@ elif savrw_use_cWriterow in ("1", "on", "true"):
 # author and version info, for e.g. use in fileLabel
 __author__ = "Albert-Jan Roskam" + " " + "@".join(["fomcl", "yahoo.com"])
 __version__ = version = get_versions()["version"].split("-")[0]
-#__version__ = version = "3.4.0"
+#__version__ = version = "3.4.2"
 del get_versions
 
 
