@@ -21,3 +21,4 @@ To get the 'bleeding edge' version straight from the repository do:
 Unittests are usually run on Linux Debian 8 64. Windows unittest and build results may be viewed here:
 
 [![Build status](https://ci.appveyor.com/api/projects/status/6chl9f5x27t37s3f?svg=true)](https://ci.appveyor.com/project/AlbertJan68345/savreaderwriter)
+
