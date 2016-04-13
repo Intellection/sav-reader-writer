@@ -10,6 +10,7 @@ import os
 import sys
 import platform
 import versioneer
+from os.path import join, dirname
 try:
     from ez_setup import use_setuptools
     use_setuptools()
@@ -25,7 +26,10 @@ versioneer.versionfile_build = 'savReaderWriter/_version.py'
 versioneer.tag_prefix = 'v'  # tags are like v1.2.0
 versioneer.parentdir_prefix = 'savReaderWriter-'
 version = versioneer.get_version()
-#version = "3.4.2"
+with open(join(dirname(__file__), "VERSION"), "w") as f:
+    f.write(version)
+with open(join(dirname(__file__), "savReaderWriter/VERSION"), "w") as f:
+    f.write(version)
 
 
 #####

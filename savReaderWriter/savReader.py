@@ -48,12 +48,26 @@ class SavReader(Header):
         * SPSS `$sysmis` values will not be converted into ``None`` values
         * String values will be ceiled multiples of 8 bytes
         See also :ref:`formats` and :ref:`dateformats`
-    ioUtf8 : bool, default False
+    ioUtf8 : bool, int, default False
         indicates the mode in which text communicated to or from the I/O 
-        Module will be. Valid values are True (UTF-8 mode aka Unicode mode)
-        and False (Codepage mode). Cf. `SET UNICODE=ON/OFF`.
+        Module will be. 
+
+        * `codepage mode`: ``ioUtf8=CODEPAGE_MODE``, or ``ioUtf8=0``, or
+          ``ioUtf8=False``. Use the current ioLocale setting to determine the
+          encoding for reading and writing data. Cf. `SET UNICODE=OFF`.
+        * `standard unicode mode`: ``ioUtf8=UNICODE_UMODE``, or ``ioUtf8=1``,
+          or ``ioUtf8=True``. Use Unicode encoding (UTF-8) for reading and 
+          writing data. Data are returned as ``unicode`` strings. 
+          Cf. `SET UNICODE=ON`.
+        * `bytes unicode mode`: ``ioUtf8=UNICODE_BMODE``, or ``ioUtf8=2``.
+          Like standard unicode mode, but data are returned as ``byte``
+          strings.
         See also under :py:meth:`savReaderWriter.Generic.ioUtf8` and under
         ``ioUtf8`` in :py:class:`savReaderWriter.SavWriter`.
+
+        .. versionchanged:: 3.4
+            ``ioUtf8=UNICODE_BMODE`` was added.
+
     ioLocale : str or None, default None
         indicates the locale of the I/O module. Cf. `SET LOCALE` (default
         = ``None``, which corresponds to 

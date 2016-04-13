@@ -20,11 +20,16 @@ class SavHeaderReader(Header):
     ----------
     savFileName : str
         The file name of the spss data file
-    ioUtf8 : bool, optional
+    ioUtf8 : bool, int, default False
         Indicates the mode in which text communicated to or from 
-        the I/O Module will be. Valid values are True (UTF-8 mode aka 
-        Unicode mode) and False (Codepage mode). Cf. `SET UNICODE=ON/OFF`
-    ioLocale : locale str, optional
+        the I/O Module will be. See also under 
+        :py:meth:`savReaderWriter.Generic.ioUtf8` and under
+        ``ioUtf8`` in :py:class:`savReaderWriter.SavReader`.
+
+        .. versionchanged:: 3.4
+            ``ioUtf8=UNICODE_BMODE`` was added. 
+
+   ioLocale : locale str, optional
         indicates the locale of the I/O module. Cf. `SET LOCALE`. 
         (default = None, which corresponds to 
         ``locale.setlocale(locale.LC_CTYPE)``)
@@ -36,9 +41,8 @@ class SavHeaderReader(Header):
 
         with SavHeaderReader(savFileName) as header:
             metadata = header.all()
+            report = str(header)
             print(metadata.varLabels)
-            print(str(header))
-            report = header.reportSpssDataDictionary(header.all(False))
 
    See also
    --------

@@ -123,21 +123,16 @@ class SavWriter(Header):
         under :py:meth:`savReaderWriter.Header.caseWeightVar`.
     overwrite : bool, optional
         indicates whether an existing SPSS file should be overwritten
-    ioUtf8 : bool, int, optional
+    ioUtf8 : bool, optional
         indicates the mode in which text communicated to or from the
         I/O Module will be. This refers to unicode mode (`SET UNICODE=ON`) 
         and codepage mode in SPSS (`SET UNICODE=OFF`).
-        See also under :py:meth:`savReaderWriter.Generic.ioUtf8`
+        See also under :py:meth:`savReaderWriter.Generic.ioUtf8` and
+	under ``ioUtf8`` in :py:class:`savReaderWriter.SavReader`.
 
-        * `codepage mode`: ``ioUtf8=CODEPAGE_MODE``, or ``ioUtf8=0``, or
-          ``ioUtf8=False``. Use the current ioLocale setting to determine the
-          encoding for reading and writing data.
-        * `standard unicode mode`: ``ioUtf8=UNICODE_UMODE``, or ``ioUtf8=1``,
-          or ``ioUtf8=True``. Use Unicode encoding (UTF-8) for reading and 
-          writing data. Data are returned as ``unicode`` strings.
-        * `bytes unicode mode`: ``ioUtf8=UNICODE_BMODE``, or ``ioUtf8=2``.
-          Like standard unicode mode, but data are returned as ``byte``
-          strings.
+        * `ioUtf8=False`. Use the current ioLocale setting to determine the
+          encoding for writing data.
+        * `ioUtf8=True`. Use Unicode encoding (UTF-8) for writing data. 
 
         Note: Data files saved in Unicode encoding cannot be read by versions
         of IBM SPSS Statistics prior to 16. Unicode mode is the default since
@@ -145,8 +140,6 @@ class SavWriter(Header):
         Statistics data files in Unicode mode or saving data files as Unicode 
         in codepage mode, defined string widths are automatically *tripled*.
 
-        .. versionchanged:: 3.4
-            ``ioUtf8=UNICODE_BMODE`` was added.
         .. seealso::
             `<http://www-01.ibm.com/support/knowledgecenter/SSLVMB_21.0.0/com.ibm.spss.statistics.help/faq_unicode.htm>`_
 

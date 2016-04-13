@@ -20,4 +20,5 @@ coverage-*/
 cover*
 _build
 _static
+VERSION
 

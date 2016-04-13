@@ -57,7 +57,7 @@ class SavReaderNp(SavReader):
         Unicode mode) and False (Codepage mode). Cf. `SET UNICODE=ON/OFF`
     ioLocale : locale str
         indicates the locale of the I/O module. Cf. `SET LOCALE`. 
-        (default = None, which corresponds to `".".join(locale.getlocale()`).
+        (default = None, which corresponds to `locale.setlocale(locale.LC_ALL, "")`.
         For example, `en_US.UTF-8`.
 
     Examples
