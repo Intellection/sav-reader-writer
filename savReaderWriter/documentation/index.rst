@@ -14,6 +14,7 @@ Welcome to savReaderWriter's documentation!
 .. _`IBM SPSS Statistics Command Syntax Reference.pdf`: ftp://public.dhe.ibm.com/software/analytics/spss/documentation/statistics/20.0/en/client/Manuals/IBM_SPSS_Statistics_Command_Syntax_Reference.pdf
 .. _`International License Agreement`: ./_static/LA_en.txt
 .. _`OS X and Python locale snippet`: ./_static/mac_os_x_locale_quirks.txt
+.. _`savViewer screenshot`: ./_static/savViewer.png
 
 
 .. seealso::
@@ -88,7 +89,8 @@ To get the 'bleeding edge' version straight from the repository do::
 .. versionchanged:: 3.4
 
 * Added ``SavReaderNp``, a class to convert .sav files to numpy arrays
-* Added ``savViewer``, a simple PyQt4-based script to view .sav, .zsav, .xls, .xlsx, .csv, .tab files
+* Added ``savViewer``, a simple PyQt4-based script to view .sav, .zsav, .xls, .xlsx, .csv, .tab files. See also this `savViewer screenshot`_.
+
   Usage examples:
  
   .. code:: sh
@@ -134,17 +136,22 @@ Enviroment variables
 
 **DYLD_LIBRARY_PATH.** Users of Mac OSX need to set this variable, see elsewhere in this documentation.
 
+**LC_ALL.** Users of Mac OSX may need to set this variable, see elsewhere in this documentation.
+
 Typical use (the TL;DR version)
-------------------------------
+-------------------------------
 
 The full documentation can be found in the :ref:`generated-api-documentation`. Here are the most important parts
 
 **Reading files**:: 
 
-    with SavReader('someFile.sav', returnHeader=True) as reader:
-        header = reader.next()
+    with SavReader('someFile.sav') as reader:
+        header = reader.header
         for line in reader:
             process(line)
+
+    with SavReader('someFile.sav') as reader:
+        records = reader.all()
             
 **Writing files**::   
 

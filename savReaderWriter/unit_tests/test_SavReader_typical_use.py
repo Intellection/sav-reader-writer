@@ -526,5 +526,20 @@ class test_SavReader_typical_use(unittest.TestCase):
             records_got = data.all()
         self.assertEqual(records_expected, records_got)
 
+    def test_SavReader_pluck_header1(self):  # issue #45
+        """Read a file and return all the data, including the variable names"""
+        with SavReader(self.savFileName, returnHeader=True) as reader:
+            header = reader.next()
+            records_got = [record for record in reader]
+        self.assertEqual(records_expected[0], header)
+        self.assertEqual(records_expected[1:], records_got)
+
+    def test_SavReader_pluck_header2(self):  # issue #45
+        with SavReader(self.savFileName, returnHeader=True) as reader:
+            header = next(reader)
+            records_got = [record for record in reader]
+        self.assertEqual(records_expected[0], header)
+        self.assertEqual(records_expected[1:], records_got)
+
 if __name__ == "__main__":
     unittest.main()
