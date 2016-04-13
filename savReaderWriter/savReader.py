@@ -256,8 +256,9 @@ class SavReader(Header):
     def _items(self, start=0, stop=None, step=1, returnHeader=False):
         """ This is a helper function to implement the __getitem__ and
         the __iter__ special methods. """
-
+        #import pdb; pdb.set_trace()
         if returnHeader and self.current_case_number <= 0:
+            self.current_case_number += 1
             yield self.header
 
         used_as_iterator = all([start == 0, stop is None, step == 1])

@@ -134,17 +134,22 @@ Enviroment variables
 
 **DYLD_LIBRARY_PATH.** Users of Mac OSX need to set this variable, see elsewhere in this documentation.
 
+**LC_ALL.** Users of Mac OSX need to set this variable, see elsewhere in this documentation.
+
 Typical use (the TL;DR version)
-------------------------------
+-------------------------------
 
 The full documentation can be found in the :ref:`generated-api-documentation`. Here are the most important parts
 
 **Reading files**:: 
 
-    with SavReader('someFile.sav', returnHeader=True) as reader:
-        header = reader.next()
+    with SavReader('someFile.sav') as reader:
+        header = reader.header
         for line in reader:
             process(line)
+
+    with SavReader('someFile.sav') as reader:
+        records = reader.all()
             
 **Writing files**::   
 
