@@ -22,7 +22,7 @@ class Test_NonAsciiSavFileName(unittest.TestCase):
             for i in range(10):
                 writer.writerow([i])
         with rw.SavReader(self.outfile) as reader:
-            self.assertEqual(reader.all(), [[float(i)] for i in range(10)])
+            self.assertEqual(reader.all(False), [[float(i)] for i in range(10)])
         self.assertTrue(os.path.exists(self.outfile))
 
     def test_nonascii_u_filename_german(self):

@@ -56,7 +56,7 @@ def test_writerows_numpy():
     with srw.SavWriter(savFileName, *args) as writer:
         writer.writerows(array)
     with srw.SavReader(savFileName, recodeSysmisTo=None) as reader:
-        actual = reader.all()
+        actual = reader.all(False)
     assert actual == desired, actual
         
 def test_writerows_pandas():
@@ -68,7 +68,7 @@ def test_writerows_pandas():
     with srw.SavWriter(savFileName, *args) as writer:
         writer.writerows(df)
     with srw.SavReader(savFileName) as reader:
-        actual = reader.all()
+        actual = reader.all(False)
     assert actual == desired, actual
 
 def test_writerows_namedtuple():
@@ -78,7 +78,7 @@ def test_writerows_namedtuple():
     with srw.SavWriter(savFileName, *args) as writer:
         writer.writerows(records)
     with srw.SavReader(savFileName) as reader:
-        actual = reader.all()
+        actual = reader.all(False)
     assert actual == desired, actual
  
 def test_writerows_tuple():
@@ -87,7 +87,7 @@ def test_writerows_tuple():
     with srw.SavWriter(savFileName, *args) as writer:
         writer.writerows(records)
     with srw.SavReader(savFileName) as reader:
-        actual = reader.all()
+        actual = reader.all(False)
     assert actual == desired, actual
 
 def test_writerows_erroneous_flat_n():

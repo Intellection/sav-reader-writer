@@ -458,13 +458,28 @@ class SavReader(Header):
             data.close()"""
         return self[-abs(n):]
 
-    def all(self):
-        """ This convenience function returns all the records.
+    def all(self, asNamedtuple=True):
+        """This convenience function returns all the records.
+
+        Parameters
+        ----------
+        asNamedtuple : bool, default True
+           whether a record should be a namedtuple, using varNames
+           as the fieldnames
+
+        Returns
+        -------
+        records : list of namedtuples or list of lists
+
         Example::
 
-            data = SavReader("someFile.sav") 
-            list_of_lists = data.all()
+            data = SavReader("someFile.sav")
+            list_of_lists = data.all(False)
             data.close()"""
+        if asNamedtuple:
+            uheader = [item.decode(self.fileEncoding) for item in self.header]
+            Record = collections.namedtuple("Record", uheader)
+            return [Record(*record) for record in iter(self)]
         return [record for record in iter(self)]
 
     def __contains__(self, item):

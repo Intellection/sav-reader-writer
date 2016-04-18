@@ -31,9 +31,8 @@ ioLocale = "german" if is_windows else "de_DE.cp1252"
 b_settings = dict(ioUtf8=sav.UNICODE_BMODE, ioLocale=ioLocale)
 
 # read SPSS file data
-data = sav.SavReader(in_savFileName, rawMode=True, **b_settings)
-with data:
-    in_records = data.all()
+with sav.SavReader(in_savFileName, rawMode=True, **b_settings) as data:
+    in_records = data.all(False)
 
 # read SPSS file metadata
 with sav.SavHeaderReader(in_savFileName, **b_settings) as header:
@@ -53,9 +52,8 @@ class Test_MetadataRoundTrip(unittest.TestCase):
         self.maxDiff = None
 
     def test_data_same(self):
-        data = sav.SavReader(out_savFileName, rawMode=True, **b_settings)
-        with data:
-            out_records = data.all()
+        with sav.SavReader(out_savFileName, rawMode=True, **b_settings) as data:
+            out_records = data.all(False)
             out_encoding = data.fileEncoding
         self.assertEqual("utf_8", out_encoding)
         self.assertEqual(in_records, out_records)
