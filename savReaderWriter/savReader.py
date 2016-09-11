@@ -213,10 +213,7 @@ class SavReader(Header):
         """Helper function for formatValues function. Determines whether
         iterating over each individual value is really needed"""
         hasDates = set(self.bareformats.values()) & set(supportedDates)
-        #hasDates = bool(hasDates)
-        #hasNfmt = b"N" in list(self.bareformats.values())
         hasNfmt = set([b"N", u"N"]) & set(self.bareformats.values())
-        #hasNfmt = bool(hasNfmt)
         hasStrings = any(self.varTypes.values())
         #hasRecodeSysmis = self.recodeSysmisTo is not None
         return not any([hasDates, hasNfmt, hasStrings, self.ioUtf8_])
