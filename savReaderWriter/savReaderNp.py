@@ -16,7 +16,6 @@ from bisect import bisect
 try:
     import numpy as np
 except ImportError:
-    print("WARNING: numpy not found, cannot use savReaderNp")
     class np: nan = float("nan")
 
 from savReaderWriter import *
@@ -532,13 +531,33 @@ class SavReaderNp(SavReader):
         self.do_convert_datetimes = True
         return array
 
-    def all(self, filename=None):
-        """Wrapper for to_structured_array; overrides the SavReader version
+    def all(self, asRecarray=True, filename=None):
+        """This convenience function returns all the records.
+
+        Wrapper for to_structured_array; overrides the SavReader version
+
+        Parameters
+        ----------
+        asRecarray : bool, default True
+           whether the array should be a recarray, using varNames
+           as the fieldnames.
+        filename : str or None, default None 
+                   The filename for the memory mapped array. If omitted, 
+                   the array will be in-memory
+
+        Returns
+        -------      
+        records : numpy.core.records.recarray (if `asRecarray==True`) or , 
+          numpy.ndarraydata (structured array, if `asRecarray==False`)
 
         See also
         --------        
         savReaderWriter.SavReaderNp.to_structured_array"""
-        return self.to_structured_array(filename)
+        structured_array = self.to_structured_array(filename)
+        if asRecarray:
+            return structured_array.view(np.recarray)
+        return structured_array
+        
 
     @convert_missings
     def to_ndarray(self, filename=None):

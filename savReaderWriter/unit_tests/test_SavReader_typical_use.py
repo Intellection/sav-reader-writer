@@ -523,7 +523,7 @@ class test_SavReader_typical_use(unittest.TestCase):
         """Read a file and retrieve all the records in one go [all()]"""
         data = SavReader(self.savFileName, returnHeader=True)
         with data:
-            records_got = data.all()
+            records_got = data.all(False)
         self.assertEqual(records_expected, records_got)
 
     def test_SavReader_pluck_header1(self):  # issue #45

@@ -46,13 +46,9 @@ class test_SavWriter_date(unittest.TestCase):
                 writer.writerow(record)
 
         # read it back in in rawMode (dates not converted to ISO-dates)
-        reader = None
-        try:
-            reader = SavReader(self.savFileName, rawMode=True) 
-            records_got = reader.all()
-        finally:
-            if reader is not None:
-                reader.close()
+        with SavReader(self.savFileName, rawMode=True) as reader:
+            records_got = reader.all(False)
+
         value1 = b'Test1                                           '
         value2 = b'Test2                                           ' 
         records_expected = [[value1, 1, 1, 13500864000.0],
