@@ -212,8 +212,11 @@ class SavReader(Header):
     def _isAutoRawMode(self):
         """Helper function for formatValues function. Determines whether
         iterating over each individual value is really needed"""
-        hasDates = bool(set(self.bareformats.values()) & set(supportedDates))
-        hasNfmt = b"N" in list(self.bareformats.values())
+        hasDates = set(self.bareformats.values()) & set(supportedDates)
+        #hasDates = bool(hasDates)
+        #hasNfmt = b"N" in list(self.bareformats.values())
+        hasNfmt = set([b"N", u"N"]) & set(self.bareformats.values())
+        #hasNfmt = bool(hasNfmt)
         hasStrings = any(self.varTypes.values())
         #hasRecodeSysmis = self.recodeSysmisTo is not None
         return not any([hasDates, hasNfmt, hasStrings, self.ioUtf8_])
@@ -252,7 +255,7 @@ class SavReader(Header):
                         fmt = supportedDates[bareformat_]
                         args = (value, fmt, self.recodeSysmisTo)
                         record[i] = self.spss2strDate(*args)
-                        if bareformat_ == b"QYR" and record[i]:
+                        if bareformat_ in (b"QYR", u"QYR") and record[i]:
                             # convert month to quarter, e.g. 12 Q 1990 --> 4 Q 1990
                             # There is no such thing as a %q strftime directive
                             try:

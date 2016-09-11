@@ -23,7 +23,6 @@ try:
 except ImportError:
     numpyOk = False
 
-
 # cWriterow is a faster Cython implementation of pyWriterow.
 # Environment variable SAVRW_USE_CWRITEROW can be used to toggle cWriterow
 # 'on' or 'off' (mainly for testing). Crashes if 'on' but no cWriterow.
@@ -110,6 +109,11 @@ supportedDates = {  # uses ISO dates wherever applicable.
     b"QYR": "%m Q %Y",  # %m (month) is converted to quarter, see next dict.
     b"TIME": "%H:%M:%S.%f",
     b"DTIME": "%d %H:%M:%S"}
+if sys.version_info[0] > 2:
+    usupportedDates = {k.decode("utf-8"): v for k, v in supportedDates.items()}
+    supportedDates.update(usupportedDates)
+    del usupportedDates
+    
 
 QUARTERS = {b'01': b'1', b'02': b'1', b'03': b'1', 
             b'04': b'2', b'05': b'2', b'06': b'2',
