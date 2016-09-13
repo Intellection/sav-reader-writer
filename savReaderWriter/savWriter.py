@@ -309,7 +309,8 @@ class SavWriter(Header):
         """ This function converts a date/time string into an SPSS date,
         using a strptime format. See also :ref:`dateformats`"""
         try:
-            datetimeStr = datetimeStr.decode("utf-8")
+            if isinstance(datetimeStr, bytes):
+                datetimeStr = datetimeStr.decode("utf-8")
             dt = time.strptime(datetimeStr, strptimeFmt)
         except (ValueError, TypeError, AttributeError):
             return self.sysmis
