@@ -105,7 +105,10 @@ class Generic(object):
             # zLinux64: Thanks Anderson P. from System z Linux LinkedIn Group!
             spssio = self._loadLibs("zlinux")
         elif pf.startswith("lin") and is_64bit:
-            spssio = self._loadLibs("lin64")
+            if platform.machine() == 'x86_64':
+                spssio = self._loadLibs("lin64-amd")
+            elif platform.machine() == 'aarch64':
+                spssio = self._loadLibs("lin64-arm")
 
         # other
         elif pf.startswith("darwin") or pf.startswith("mac"):
