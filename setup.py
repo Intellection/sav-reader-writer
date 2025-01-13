@@ -54,8 +54,10 @@ if is_install_mode:
         package_data['savReaderWriter'].append('spssio/lin32/*.*')
     elif pf.startswith("lin") and is_64bit and os.uname()[-1] == "s390x":
         package_data['savReaderWriter'].append('spssio/zlinux64/*.*')
-    elif pf.startswith("lin") and is_64bit:
-        package_data['savReaderWriter'].append('spssio/lin64/*.*')
+    elif pf.startswith("lin") and is_64bit and os.uname()[-1] == "aarch64":
+        package_data['savReaderWriter'].append('spssio/lin64-arm/*.*')
+    elif pf.startswith("lin") and is_64bit and os.uname()[-1] == "x86_64":
+        package_data['savReaderWriter'].append('spssio/lin64-amd/*.*')
     elif pf.startswith("darwin") or pf.startswith("mac"):
         package_data['savReaderWriter'].append('spssio/macos/*.*')
     elif pf.startswith("aix") and not is_32bit:
@@ -74,7 +76,8 @@ else:
                                             'spssio/win64/*.*',
                                             'spssio/lin32/*.*',
                                             'spssio/zlinux64/*.*',
-                                            'spssio/lin64/*.*',
+                                            'spssio/lin64-arm/*.*',
+                                            'spssio/lin64-amd/*.*',
                                             'spssio/macos/*.*',
                                             'spssio/aix64/*.*'
                                             'spssio/hpux_it/*.*',
